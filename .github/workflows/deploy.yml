@@ -3,10 +3,10 @@ name: Deploy JhonathanOS
 on:
   push:
     branches:
-      - main  # <--- VERIFICA: Si tu rama se llama 'master', cambia 'main' por 'master'
+      - main
 
 permissions:
-  contents: write  # Esto le da permiso al robot para publicar en gh-pages
+  contents: write
 
 jobs:
   build-and-deploy:
@@ -17,12 +17,15 @@ jobs:
 
       - name: Crear archivo config.js
         run: |
+          # Generamos el archivo con el contenido del secreto
           echo "${{ secrets.FIREBASE_CONFIG }}" > config.js
-          # Si usas carpetas para JS, asegúrate de copiarlo también ahí:
-          # cp config.js js/config.js
+          
+          # Verificación de seguridad para nosotros (verás esto en los logs de GitHub)
+          echo "Archivo config.js creado exitosamente."
+          ls -lh config.js
 
       - name: Desplegar a GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: .
-          branch: gh-pages
+          folder: .        # Sube todo lo que hay en la raíz
+          branch: gh-pages # Lo envía a la rama de publicación
