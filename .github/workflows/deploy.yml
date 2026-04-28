@@ -31,4 +31,4 @@ jobs:
         with:
           folder: .        # Sube todo el contenido de la raíz
           branch: gh-pages # Destino: la rama que ya tienes configurada
-          clean: false     # Importante: para que no borre archivos necesarios
+          clean: true     # Importante: para que no borre archivos necesarios
