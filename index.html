@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>JhonathanOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="app.js"></script>
+    <style>
+        body { touch-action: pan-x pan-y; font-family: sans-serif; }
+        .no-select { user-select: none; -webkit-user-select: none; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Animación de entrada para los elementos del roadmap */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+.scale-in-center {
+    animation: scale-in-center 0.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+@keyframes scale-in-center {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+    </style>
+</head>
+<body class="bg-slate-50 no-select">
+
+    <div id="app" class="min-h-screen pb-24">
+        <div id="view-container"></div>
+        <div id="modal-container" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-sm"></div>
+    </div>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-6 py-3 flex justify-between items-center shadow-2xl z-50">
+        <button onclick="showView('gym')" class="flex flex-col items-center text-blue-600">
+            <span class="text-2xl">💪</span>
+            <span class="text-[10px] font-bold uppercase">Gym</span>
+        </button>
+        <button onclick="showView('mariachi')" class="flex flex-col items-center text-slate-400">
+            <span class="text-2xl">🎺</span>
+            <span class="text-[10px] font-bold uppercase">Work</span>
+        </button>
+        <button onclick="showView('academy')" class="flex flex-col items-center text-slate-400">
+            <span class="text-2xl">🎓</span>
+            <span class="text-[10px] font-bold uppercase">Study</span>
+        </button>
+    </nav>
+</body>
+</html>
