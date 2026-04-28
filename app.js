@@ -144,6 +144,8 @@ function showView(view) {
         renderHistorial(container);
     } else if(view === 'settings') {
         renderSettings(container);
+    }else if(view === 'work') {
+    renderWork(container); 
     }
 }
 
