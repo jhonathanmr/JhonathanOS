@@ -17,14 +17,22 @@ jobs:
 
       - name: Generar archivos de configuración
         run: |
-          # Creamos el archivo como un script plano asignando al objeto window
+          # 1. Eliminamos cualquier rastro del archivo anterior para que no se mezclen
+          rm -f config.js
+          
+          # 2. Creamos el archivo DESDE CERO sin la palabra export
+          # IMPORTANTE: Asegúrate de que en tus Secrets de GitHub, el valor de FIREBASE_CONFIG empiece con { y termine con }
           echo "window.firebaseConfig = ${{ secrets.FIREBASE_CONFIG }};" > config.js
+          
+          # 3. Archivo para saltar Jekyll
           touch .nojekyll
-          # Forzamos que se incluya aunque esté en .gitignore
+          
+          # 4. Quitamos del ignore para el deploy
           sed -i '/config.js/d' .gitignore || true
           
-          echo "Verificando existencia:"
-          ls -la config.js .nojekyll
+          # 5. Verificamos en el log qué se escribió (esto es clave para debuguear)
+          echo "Contenido generado (primeros caracteres):"
+          head -c 30 config.js
 
       - name: Desplegar a GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
