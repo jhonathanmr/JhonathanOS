@@ -1,17 +1,10 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+// --- IMPORTAMOS LA CONFIGURACIÓN ---
+import { firebaseConfig } from './config.js';
 
 const SESSION_TIMEOUT_MINS = 120;
-const DASHBOARD_KEY = "1234";
-const firebaseConfig = {
-    apiKey: "AIzaSyBYbdLe92IsQdgzLBwgOPhLc1q_UvuESxk",
-    authDomain: "nomina-mariachi.firebaseapp.com",
-    databaseURL: "https://nomina-mariachi-default-rtdb.firebaseio.com",
-    projectId: "nomina-mariachi",
-    storageBucket: "nomina-mariachi.firebasestorage.app",
-    messagingSenderId: "22825374302",
-    appId: "1:22825374302:web:a7918dcb3969d2705b1acf"
-};
+// Borramos DASHBOARD_KEY de aquí, la traeremos de la BD más adelante
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
@@ -155,7 +148,6 @@ function renderGymInicio(container) {
     const today = days[new Date().getDay()];
     
     const currentWeek = USER_DATA.currentWeek;
-    const progress = (currentWeek / USER_DATA.totalWeeks) * 100;
 
     // Generar el Roadmap Horizontal
     const roadmapHTML = `
@@ -214,17 +206,23 @@ function renderGymInicio(container) {
             <div class="space-y-4">
                 ${["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map(day => {
                     const isToday = day === today;
+                    const routineName = USER_DATA.routine[day]?.name || 'Rest Day';
+                    
                     return `
                     <div class="bg-white p-5 rounded-[1.5rem] border-2 ${isToday ? 'border-blue-600 shadow-md' : 'border-slate-50 opacity-80'}">
                         <div class="flex justify-between items-center">
                             <div>
                                 <p class="text-[10px] font-black uppercase ${isToday ? 'text-blue-600' : 'text-slate-400'}">${day}</p>
-                                <p class="font-bold text-lg ${isToday ? 'text-slate-900' : 'text-slate-700'}">${USER_DATA.routine[day]?.name || 'Rest Day'}</p>
+                                <p class="font-bold text-lg ${isToday ? 'text-slate-900' : 'text-slate-700'}">${routineName}</p>
                             </div>
-                            ${isToday ? `<button onclick="startWorkout('${day}')" class="bg-blue-600 text-white px-6 py-2 rounded-xl font-black text-xs uppercase shadow-md">Start</button>` : ''}
+                            <button onclick="startWorkout('${day}')" 
+                                    class="${isToday ? 'bg-blue-600' : 'bg-slate-800 opacity-50'} text-white px-6 py-2 rounded-xl font-black text-xs uppercase shadow-md active:scale-95 transition-all">
+                                Start
+                            </button>
                         </div>
                     </div>
-                `}).join('')}
+                    `; // <-- Aquí estaba el cierre faltante
+                }).join('')}
             </div>
         </div>
     `;
@@ -519,18 +517,26 @@ function isSessionValid() {
     return true;
 }
 
-window.checkAccess = () => {
+window.checkAccess = async () => { // Agregamos async
     const input = document.getElementById('pass-input').value;
-    const masterKey = localStorage.getItem('gym_pass') || "1234"; // "1234" por defecto
+    
+    // 1. Buscamos la clave real en la Base de Datos
+    try {
+        const snapshot = await get(child(ref(db), 'config/admin_password'));
+        const masterKey = snapshot.exists() ? snapshot.val() : "1234"; // "1234" de respaldo
 
-    if (input === masterKey) {
-        localStorage.setItem('isLogged', 'true');
-        localStorage.setItem('loginTimestamp', Date.now().toString());
-        showView('gym');
-    } else {
-        const errorMsg = document.getElementById('login-error');
-        errorMsg.classList.replace('opacity-0', 'opacity-100');
-        setTimeout(() => errorMsg.classList.replace('opacity-100', 'opacity-0'), 2000);
+        if (input === masterKey.toString()) {
+            localStorage.setItem('isLogged', 'true');
+            localStorage.setItem('loginTimestamp', Date.now().toString());
+            showView('gym');
+        } else {
+            const errorMsg = document.getElementById('login-error');
+            errorMsg.classList.replace('opacity-0', 'opacity-100');
+            setTimeout(() => errorMsg.classList.replace('opacity-100', 'opacity-0'), 2000);
+        }
+    } catch (error) {
+        console.error("Error al validar acceso:", error);
+        alert("Error de conexión con la base de datos.");
     }
 };
 
@@ -589,14 +595,41 @@ function renderSettings(container) {
     `;
 }
 
-window.updatePassword = () => {
+window.updatePassword = async () => {
     const newPass = document.getElementById('new-pass').value;
+    
     if (newPass.length >= 4) {
-        localStorage.setItem('gym_pass', newPass);
-        alert("Password updated successfully! 🔥");
-        showView('gym');
+        try {
+            // Guardamos en Firebase
+            await set(ref(db, 'config/admin_password'), newPass);
+            
+            // Usamos tu modal en lugar de alert()
+            renderModal(
+                "¡Éxito! 🔥", 
+                "La contraseña de acceso ha sido actualizada en la nube correctamente.",
+                "Entendido",
+                () => showView('gym') // Al cerrar, volvemos al inicio
+            );
+            
+        } catch (error) {
+            // Modal de error
+            renderModal(
+                "Error ⚠️", 
+                "No pudimos actualizar la clave: " + error.message, 
+                "Reintentar", 
+                () => {}, // No hace nada especial, solo cierra
+                true      // Color rojo de peligro
+            );
+        }
     } else {
-        alert("Password must be at least 4 digits.");
+        // Modal para validación simple
+        renderModal(
+            "Clave muy corta", 
+            "Por seguridad, la contraseña debe tener al menos 4 dígitos.", 
+            "Corregir", 
+            () => {},
+            true
+        );
     }
 };
 
