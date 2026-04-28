@@ -1,0 +1,22 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ] # O la rama que uses
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Create Config File
+        run: |
+          echo "${{ secrets.FIREBASE_CONFIG }}" > config.js
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: . # La carpeta donde está tu index.html
+          branch: gh-pages # GitHub Pages leerá de aquí
