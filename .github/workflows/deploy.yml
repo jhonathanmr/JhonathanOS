@@ -17,18 +17,20 @@ jobs:
 
       - name: Generar archivos de configuración
         run: |
-          # 1. Creamos el config.js con el secreto de Firebase
+          # Creamos el archivo
           echo "${{ secrets.FIREBASE_CONFIG }}" > config.js
-          
-          # 2. Creamos el .nojekyll para que GitHub no ignore archivos
           touch .nojekyll
           
-          # 3. Verificamos que se crearon (esto saldrá en los logs si falla)
+          # EL TRUCO: Eliminamos el archivo del control de gitignore 
+          # solo para esta sesión del robot
+          sed -i '/config.js/d' .gitignore || true
+          
+          echo "Verificando existencia:"
           ls -la config.js .nojekyll
 
       - name: Desplegar a GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: .        # Sube todo el contenido de la raíz
-          branch: gh-pages # Destino: la rama que ya tienes configurada
-          clean: true     # Importante: para que no borre archivos necesarios
+          folder: .
+          branch: gh-pages
+          clean: true
