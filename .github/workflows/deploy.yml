@@ -15,17 +15,20 @@ jobs:
       - name: Checkout del código
         uses: actions/checkout@v4
 
-      - name: Crear archivo config.js
+      - name: Generar archivos de configuración
         run: |
-          # Generamos el archivo con el contenido del secreto
+          # 1. Creamos el config.js con el secreto de Firebase
           echo "${{ secrets.FIREBASE_CONFIG }}" > config.js
           
-          # Verificación de seguridad para nosotros (verás esto en los logs de GitHub)
-          echo "Archivo config.js creado exitosamente."
-          ls -lh config.js
+          # 2. Creamos el .nojekyll para que GitHub no ignore archivos
+          touch .nojekyll
+          
+          # 3. Verificamos que se crearon (esto saldrá en los logs si falla)
+          ls -la config.js .nojekyll
 
       - name: Desplegar a GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: .        # Sube todo lo que hay en la raíz
-          branch: gh-pages # Lo envía a la rama de publicación
+          folder: .        # Sube todo el contenido de la raíz
+          branch: gh-pages # Destino: la rama que ya tienes configurada
+          clean: false     # Importante: para que no borre archivos necesarios
