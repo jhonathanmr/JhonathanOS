@@ -1,13 +1,24 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+// --- CONFIGURACIÓN GLOBAL ---
+const SESSION_TIMEOUT_MINS = 120; // <--- MUEVE ESTO AQUÍ ARRIBA
 
-// 2. Prioridad: window.firebaseConfig (WEB), si no existe, usa localConfig
+const localConfig = {
+    apiKey: "AIzaSyBYbdLe92IsQdgzLBwgOPhLc1q_UvuESxk",
+    authDomain: "nomina-mariachi.firebaseapp.com",
+    databaseURL: "https://nomina-mariachi-default-rtdb.firebaseio.com",
+    projectId: "nomina-mariachi",
+    storageBucket: "nomina-mariachi.firebasestorage.app",
+    messagingSenderId: "22825374302",
+    appId: "1:22825374302:web:a7918dcb3969d2705b1acf"
+};
+
 const firebaseConfig = window.firebaseConfig || localConfig;
-
-// 3. Inicialización
 const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);
+
+console.log("🔥 Firebase conectado con éxito");
 
 console.log("Firebase inicializado correctamente");
 
