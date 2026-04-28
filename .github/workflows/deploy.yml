@@ -18,7 +18,7 @@ jobs:
       - name: Generar archivos de configuración
         run: |
           # Creamos el archivo
-          echo "${{ secrets.FIREBASE_CONFIG }}" > config.js
+          echo "export const firebaseConfig = ${{ secrets.FIREBASE_CONFIG }};" > config.js
           touch .nojekyll
           
           # EL TRUCO: Eliminamos el archivo del control de gitignore 
