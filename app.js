@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 // --- IMPORTAMOS LA CONFIGURACIÓN ---
-import { firebaseConfig } from './config.js';
+import { firebaseConfig } from './config.js?v=1';
 
 const SESSION_TIMEOUT_MINS = 120;
 // Borramos DASHBOARD_KEY de aquí, la traeremos de la BD más adelante
