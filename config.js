@@ -1,4 +1,4 @@
-export const firebaseConfig = export const firebaseConfig = {
+window.firebaseConfig = export const firebaseConfig = {
     apiKey: AIzaSyBYbdLe92IsQdgzLBwgOPhLc1q_UvuESxk,
     authDomain: nomina-mariachi.firebaseapp.com,
     databaseURL: https://nomina-mariachi-default-rtdb.firebaseio.com,

@@ -1,14 +1,15 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-// --- IMPORTAMOS LA CONFIGURACIÓN ---
-import { firebaseConfig } from './config.js';
 
 const SESSION_TIMEOUT_MINS = 120;
-// Borramos DASHBOARD_KEY de aquí, la traeremos de la BD más adelante
 
-const app = initializeApp(firebaseConfig);
+// Agregamos una validación simple para evitar errores de "undefined"
+if (!window.firebaseConfig) {
+    console.error("Firebase Config no encontrada. Revisa el orden de los scripts en el HTML.");
+}
+
+const app = initializeApp(window.firebaseConfig);
 const db = getDatabase(app);
-
 // 1. Datos de tu Rutina
 const USER_DATA = {
     currentWeek: parseInt(localStorage.getItem('gym_current_week')) || 1,
