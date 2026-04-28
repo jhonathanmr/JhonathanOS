@@ -706,7 +706,7 @@ async function checkAccess() {
     }
 }
 
-// EXPORTACIONES
+// --- EXPORTACIONES PARA EL HTML ---
 window.showView = showView;
 window.startWorkout = startWorkout;
 window.finishWorkout = finishWorkout;
@@ -717,6 +717,13 @@ window.confirmLogout = confirmLogout;
 window.updatePassword = updatePassword; 
 window.confirmLogout = confirmLogout;
 window.closeModal = closeModal;
-window.checkAccess = checkAccess;
+window.toggleDetail = (id) => {
+    const el = document.getElementById(id);
+    if(el) el.classList.toggle('hidden');
+};
 
-showView('gym');
+// --- INICIO DE LA APP ---
+// Ejecutamos showView al cargar para decidir si va a Login o a Gym
+document.addEventListener('DOMContentLoaded', () => {
+    showView('gym');
+});

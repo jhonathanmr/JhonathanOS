@@ -1,5 +1,5 @@
 window.firebaseConfig = {
-  apiKey: AIzaSyBY...,
+  apiKey: AIzaSyBYbdLe92IsQdgzLBwgOPhLc1q_UvuESxk,
   authDomain: nomina-mariachi.firebaseapp.com,
   databaseURL: https://nomina-mariachi-default-rtdb.firebaseio.com,
   projectId: nomina-mariachi,
