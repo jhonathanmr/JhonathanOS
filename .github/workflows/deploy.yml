@@ -17,9 +17,10 @@ jobs:
 
       - name: Generar archivos de configuración
         run: |
-          # Usamos window.firebaseConfig para que sea accesible desde cualquier script
+          # Creamos el archivo como un script plano asignando al objeto window
           echo "window.firebaseConfig = ${{ secrets.FIREBASE_CONFIG }};" > config.js
           touch .nojekyll
+          # Forzamos que se incluya aunque esté en .gitignore
           sed -i '/config.js/d' .gitignore || true
           
           echo "Verificando existencia:"
