@@ -18,6 +18,8 @@ jobs:
       - name: Crear archivo config.js
         run: |
           echo "${{ secrets.FIREBASE_CONFIG }}" > config.js
+          # Si usas carpetas para JS, asegúrate de copiarlo también ahí:
+          # cp config.js js/config.js
 
       - name: Desplegar a GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
