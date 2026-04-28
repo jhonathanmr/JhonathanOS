@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 // --- CONFIGURACIÓN GLOBAL ---
 const SESSION_TIMEOUT_MINS = 120; // <--- MUEVE ESTO AQUÍ ARRIBA
@@ -695,6 +695,17 @@ window.confirmLogout = () => {
     );
 };
 
+async function checkAccess() {
+    try {
+        const dbRef = ref(db);
+        // Aquí ya no dará error porque 'get' está importado arriba
+        const snapshot = await get(child(dbRef, `usuarios/tu_ruta`)); 
+        // ... tu lógica
+    } catch (error) {
+        console.error("Error al validar acceso:", error);
+    }
+}
+
 // EXPORTACIONES
 window.showView = showView;
 window.startWorkout = startWorkout;
@@ -706,5 +717,6 @@ window.confirmLogout = confirmLogout;
 window.updatePassword = updatePassword; 
 window.confirmLogout = confirmLogout;
 window.closeModal = closeModal;
+window.checkAccess = checkAccess;
 
 showView('gym');
