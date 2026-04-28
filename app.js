@@ -1,15 +1,17 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getDatabase } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-const SESSION_TIMEOUT_MINS = 120;
 
-// Agregamos una validación simple para evitar errores de "undefined"
-if (!window.firebaseConfig) {
-    console.error("Firebase Config no encontrada. Revisa el orden de los scripts en el HTML.");
+// Intentamos usar la de la web, si no, usamos la local
+const firebaseConfig = window.firebaseConfig || localConfig;
+
+if (!firebaseConfig || !firebaseConfig.apiKey) {
+    console.error("ERROR CRÍTICO: No hay configuración de Firebase disponible.");
 }
 
-const app = initializeApp(window.firebaseConfig);
-const db = getDatabase(app);
+const app = initializeApp(firebaseConfig);
+export const db = getDatabase(app);
+
 // 1. Datos de tu Rutina
 const USER_DATA = {
     currentWeek: parseInt(localStorage.getItem('gym_current_week')) || 1,
