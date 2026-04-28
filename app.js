@@ -2,15 +2,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getDatabase } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
 
-// Intentamos usar la de la web, si no, usamos la local
+// 2. Prioridad: window.firebaseConfig (WEB), si no existe, usa localConfig
 const firebaseConfig = window.firebaseConfig || localConfig;
 
-if (!firebaseConfig || !firebaseConfig.apiKey) {
-    console.error("ERROR CRÍTICO: No hay configuración de Firebase disponible.");
-}
-
+// 3. Inicialización
 const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);
+
+console.log("Firebase inicializado correctamente");
 
 // 1. Datos de tu Rutina
 const USER_DATA = {

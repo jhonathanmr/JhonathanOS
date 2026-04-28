@@ -12,27 +12,20 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout del código
-        uses: actions/checkout@v4
-
       - name: Generar archivos de configuración
         run: |
-          # 1. Eliminamos cualquier rastro del archivo anterior para que no se mezclen
+          # Eliminamos para evitar conflictos
           rm -f config.js
           
-          # 2. Creamos el archivo DESDE CERO sin la palabra export
-          # IMPORTANTE: Asegúrate de que en tus Secrets de GitHub, el valor de FIREBASE_CONFIG empiece con { y termine con }
+          # Creamos el archivo como un script puro (el navegador lo ama)
+          # Esto inyecta el JSON del secreto directamente en una variable global
           echo "window.firebaseConfig = ${{ secrets.FIREBASE_CONFIG }};" > config.js
           
-          # 3. Archivo para saltar Jekyll
           touch .nojekyll
-          
-          # 4. Quitamos del ignore para el deploy
           sed -i '/config.js/d' .gitignore || true
           
-          # 5. Verificamos en el log qué se escribió (esto es clave para debuguear)
-          echo "Contenido generado (primeros caracteres):"
-          head -c 30 config.js
+          echo "Debug: Primeras lineas del archivo generado:"
+          head -n 1 config.js
 
       - name: Desplegar a GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
