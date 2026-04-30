@@ -17,6 +17,17 @@ async function renderWork(container) {
     const mesNombre = currentViewDate.toLocaleString('es-CO', { month: 'long', year: 'numeric' });
     
     container.innerHTML = `
+    <div class="p-6 pb-32">
+            <header class="mb-8 flex justify-between items-start">
+                <div>
+                    <h1 class="text-3xl font-black italic">JH <span class="text-blue-600">OS</span></h1>
+                    <p class="text-slate-400 text-[10px] font-bold uppercase tracking-tighter">Software & Music & Fitness</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="showView('settings')" class="bg-slate-100 p-2 rounded-lg text-xs">⚙️</button>
+                    <button onclick="confirmLogout()" class="bg-red-50 p-2 rounded-lg text-xs opacity-50">🔒</button>
+                </div>
+            </header>
     <div class="p-6 pb-32 animate-in fade-in duration-500">
         <header class="mb-6 flex justify-between items-center">
             <button onclick="changeMonth(-1)" class="bg-slate-100 p-3 rounded-2xl">◀</button>
