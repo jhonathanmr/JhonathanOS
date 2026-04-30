@@ -220,21 +220,26 @@ async function loadWorkData() {
                        d.getFullYear() === currentViewDate.getFullYear();
             }).sort((a, b) => b.timestamp - a.timestamp);
 
-            // 3. CÁLCULO DE TOTALES DEL MES (Data Analysis)
+           // 3. CÁLCULO DE TOTALES (Ajustado para detectar números en cualquier parte)
             const totalesMes = filteredRecords.reduce((acc, reg) => {
                 const monto = parseInt(reg.monto);
+                const dia = new Date(reg.timestamp).getDate();
+
                 if (reg.tipo === 'ingreso') {
                     acc.ganado += monto;
-                    if (new Date(reg.timestamp).getDate() <= 15) acc.q1 += monto;
-                    else acc.q2 += monto;
+                    if (dia <= 15) acc.q1 += monto; else acc.q2 += monto;
                     
-                    const match = reg.desc.match(/^(\d+)/);
-                    if(match) acc.serenatas += parseInt(match[1]);
+                    // CORRECCIÓN AQUÍ: Busca cualquier número en la descripción
+                    const match = reg.desc.match(/(\d+)/); 
+                    if (match) {
+                        acc.serenatas += parseInt(match[0]);
+                    }
                 } else if (reg.tipo === 'adelanto') {
                     acc.adelantos += monto;
+                    if (dia <= 15) acc.q1_adelantos += monto; else acc.q2_adelantos += monto;
                 }
                 return acc;
-            }, { ganado: 0, adelantos: 0, q1: 0, q2: 0, serenatas: 0 });
+            }, { ganado: 0, adelantos: 0, q1: 0, q2: 0, q1_adelantos: 0, q2_adelantos: 0, serenatas: 0 });
 
             // 4. RENDERIZADO DE LA LISTA (Con botón de editar)
             listDiv.innerHTML = filteredRecords.map(reg => {
@@ -271,11 +276,20 @@ async function loadWorkData() {
             }).join('');
 
             // 5. ACTUALIZACIÓN DE UI (Caja, Barra y Letreros)
-            const cupoMaximoActual = (BASE_CAJA - totalesMes.adelantos)*(-1);
+            const saldoMeta = totalesMes.ganado - BASE_CAJA; 
+
             const cajaDispElem = document.getElementById('caja-disponible');
             if (cajaDispElem) {
-                cajaDispElem.innerText = `$ ${cupoMaximoActual.toLocaleString('de-DE')}`;
-                cajaDispElem.style.color = cupoMaximoActual < 0 ? '#fb7185' : '#0ada5ae5';
+                // Formateamos con el signo manual para que sea claro
+                const prefijo = saldoMeta > 0 ? '' : '';
+                cajaDispElem.innerText = `$ ${prefijo}${saldoMeta.toLocaleString('de-DE')}`;
+                
+                // Cambiamos el color según si ya pasamos el 0 (Meta lograda)
+                if (saldoMeta >= 0) {
+                    cajaDispElem.style.color = '#0ada5ae5'; // Verde: ¡Ganancia!
+                } else {
+                    cajaDispElem.style.color = '#fb7185'; // Rosado/Rojo: Falta por recuperar
+                }
             }
 
             const barraElem = document.getElementById('barra-progreso-caja');
@@ -294,9 +308,33 @@ async function loadWorkData() {
                 }
             }
 
-            // 6. TOTALES INFERIORES
-            document.getElementById('q1-total').innerText = `$ ${totalesMes.q1.toLocaleString('de-DE')}`;
-            document.getElementById('q2-total').innerText = `$ ${totalesMes.q2.toLocaleString('de-DE')}`;
+            // 6. TOTALES INFERIORES (Cajas Azules con Valor Absoluto)
+            const cupoQ1Raw = 1500000 - totalesMes.q1_adelantos;
+            const cupoQ2Raw = 1500000 - totalesMes.q2_adelantos;
+
+            // Usamos Math.abs para mostrar el valor sin el signo menos
+            const cupoQ1Visible = Math.abs(cupoQ1Raw);
+            const cupoQ2Visible = Math.abs(cupoQ2Raw);
+
+            // Etiquetas dinámicas para saber si es lo que queda o lo que se pasaron
+            const etiquetaQ1 = cupoQ1Raw < 0 ? "EXCEDIDO:" : "CUPO DISP:";
+            const etiquetaQ2 = cupoQ2Raw < 0 ? "EXCEDIDO:" : "CUPO DISP:";
+
+            document.getElementById('q1-total').innerHTML = `
+                <span class="block">$ ${totalesMes.q1.toLocaleString('de-DE')}</span>
+                <span class="text-[12px] ${cupoQ1Raw < 0 ? 'text-emerald-400' : 'text-white-400'} font-black block mt-1">
+                    ${etiquetaQ1} $ ${cupoQ1Visible.toLocaleString('de-DE')}
+                </span>
+            `;
+
+            document.getElementById('q2-total').innerHTML = `
+                <span class="block">$ ${totalesMes.q2.toLocaleString('de-DE')}</span>
+                <span class="text-[12px] ${cupoQ2Raw < 0 ? 'text-emerald-400' : 'text-white-400'} font-black block mt-1">
+                    ${etiquetaQ2} $ ${cupoQ2Visible.toLocaleString('de-DE')}
+                </span>
+            `;
+
+            // El resto de tus totales se mantienen igual
             document.getElementById('month-total').innerText = `$ ${totalesMes.ganado.toLocaleString('de-DE')}`;
             document.getElementById('total-qty-mes').innerText = totalesMes.serenatas;
             document.getElementById('saldo-pendiente').innerText = `$ ${saldoPendienteGlobal.toLocaleString('de-DE')}`;
