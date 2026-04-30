@@ -17,27 +17,30 @@ async function renderWork(container) {
     const mesNombre = currentViewDate.toLocaleString('es-CO', { month: 'long', year: 'numeric' });
     
     container.innerHTML = `
-    <div class="p-6 pb-32">
-            <header class="mb-8 flex justify-between items-start">
-                <div>
-                    <h1 class="text-3xl font-black italic">JH <span class="text-blue-600">OS</span></h1>
-                    <p class="text-slate-400 text-[10px] font-bold uppercase tracking-tighter">Software & Music & Fitness</p>
-                </div>
-                <div class="flex gap-2">
-                    <button onclick="showView('settings')" class="bg-slate-100 p-2 rounded-lg text-xs">⚙️</button>
-                    <button onclick="confirmLogout()" class="bg-red-50 p-2 rounded-lg text-xs opacity-50">🔒</button>
-                </div>
-            </header>
     <div class="p-6 pb-32 animate-in fade-in duration-500">
+        <!-- HEADER PRINCIPAL: JH OS -->
+        <header class="mb-8 flex justify-between items-start">
+            <div>
+                <h1 class="text-3xl font-black italic">JH <span class="text-blue-600">OS</span></h1>
+                <p class="text-slate-400 text-[10px] font-bold uppercase tracking-tighter">Software & Music & Fitness</p>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="showView('settings')" class="bg-slate-100 p-2 rounded-lg text-xs">⚙️</button>
+                <button onclick="confirmLogout()" class="bg-red-50 p-2 rounded-lg text-xs opacity-50">🔒</button>
+            </div>
+        </header>
+
+        <!-- HEADER DE NAVEGACIÓN: MES -->
         <header class="mb-6 flex justify-between items-center">
-            <button onclick="changeMonth(-1)" class="bg-slate-100 p-3 rounded-2xl">◀</button>
+            <button onclick="changeMonth(-1)" class="bg-slate-100 p-3 rounded-2xl font-bold">◀</button>
             <div class="text-center">
                 <h1 class="text-xl font-black italic uppercase">${mesNombre}</h1>
                 <p class="text-[10px] font-bold text-slate-400">FINANZAS MARIACHI</p>
             </div>
-            <button onclick="changeMonth(1)" class="bg-slate-100 p-3 rounded-2xl">▶</button>
+            <button onclick="changeMonth(1)" class="bg-slate-100 p-3 rounded-2xl font-bold">▶</button>
         </header>
 
+        <!-- CARD DE CAJA DISPONIBLE -->
         <div class="mb-6 bg-gradient-to-br from-slate-800 to-slate-900 rounded-[2.5rem] p-6 text-white shadow-2xl relative overflow-hidden">
             <div class="relative z-10">
                 <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Caja Disponible (Base $3M)</p>
@@ -52,6 +55,7 @@ async function renderWork(container) {
             <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-white/5 rounded-full"></div>
         </div>
 
+        <!-- GRID DE ESTADÍSTICAS -->
         <div class="grid grid-cols-2 gap-3 mb-6">
             <div class="bg-white border border-slate-100 rounded-[2rem] p-4 shadow-sm flex flex-col items-center">
                 <p class="text-[10px] font-black uppercase text-slate-400">Serenatas Mes</p>
@@ -76,6 +80,7 @@ async function renderWork(container) {
             </div>
         </div>
 
+        <!-- BOTONES DE ACCIÓN -->
         <div class="grid grid-cols-2 gap-4 mb-8">
             <button onclick="openWorkModal('ingreso')" class="bg-emerald-500 text-white p-4 rounded-2xl font-black uppercase text-[10px] shadow-lg active:scale-95 transition-transform">
                 + Serenatas
