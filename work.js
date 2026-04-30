@@ -22,21 +22,21 @@ async function renderWork(container) {
             <button onclick="changeMonth(-1)" class="bg-slate-100 p-3 rounded-2xl">◀</button>
             <div class="text-center">
                 <h1 class="text-xl font-black italic uppercase">${mesNombre}</h1>
-                <p class="text-[9px] font-bold text-slate-400">FINANZAS MARIACHI</p>
+                <p class="text-[10px] font-bold text-slate-400">FINANZAS MARIACHI</p>
             </div>
             <button onclick="changeMonth(1)" class="bg-slate-100 p-3 rounded-2xl">▶</button>
         </header>
 
         <div class="mb-6 bg-gradient-to-br from-slate-800 to-slate-900 rounded-[2.5rem] p-6 text-white shadow-2xl relative overflow-hidden">
             <div class="relative z-10">
-                <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Caja Disponible (Base $1.5M)</p>
-                <h2 id="caja-disponible" class="text-3xl font-black italic">$ 1.500.000</h2>
+                <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Caja Disponible (Base $3M)</p>
+                <h2 id="caja-disponible" class="text-3xl font-black italic">$ 3.000.000</h2>
                 <div class="mt-4 h-1.5 w-full bg-slate-700 rounded-full overflow-hidden">
                     <div id="barra-progreso-caja" class="h-full bg-emerald-500 transition-all duration-1000" style="width: 0%"></div>
                 </div>
                 <div class="flex justify-between mt-2">
-                    <p class="text-[8px] font-bold text-slate-500 uppercase">Progreso de cobro</p>
-                    <p id="texto-faltante" class="text-[8px] font-bold text-emerald-400 uppercase italic"></p>
+                    <p class="text-[10px] font-bold text-slate-500 uppercase">Progreso de cobro</p>
+                    <p id="texto-faltante" class="text-[10px] font-bold text-emerald-400 uppercase italic"></p>
                 </div>
             </div>
             <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-white/5 rounded-full"></div>
@@ -44,20 +44,20 @@ async function renderWork(container) {
 
         <div class="grid grid-cols-2 gap-3 mb-6">
             <div class="bg-white border border-slate-100 rounded-[2rem] p-4 shadow-sm flex flex-col items-center">
-                <p class="text-[8px] font-black uppercase text-slate-400">Serenatas Mes</p>
+                <p class="text-[10px] font-black uppercase text-slate-400">Serenatas Mes</p>
                 <h2 id="total-qty-mes" class="text-xl font-black italic text-slate-800">0</h2>
             </div>
             <div class="bg-orange-50 border border-orange-100 rounded-[2rem] p-4 shadow-sm flex flex-col items-center">
-                <p class="text-[8px] font-black uppercase text-orange-400">Por Cobrar</p>
+                <p class="text-[10px] font-black uppercase text-orange-400">Por Cobrar</p>
                 <h2 id="saldo-pendiente" class="text-xl font-black italic text-orange-600">$ 0</h2>
             </div>
             
             <div class="bg-slate-900 rounded-[2rem] p-5 text-white shadow-lg">
-                <p class="text-[8px] font-black uppercase text-slate-400">1ra Quincena</p>
+                <p class="text-[10px] font-black uppercase text-slate-400">1ra Quincena</p>
                 <h2 id="q1-total" class="text-lg font-black italic">$ 0</h2>
             </div>
             <div class="bg-slate-900 rounded-[2rem] p-5 text-white shadow-lg">
-                <p class="text-[8px] font-black uppercase text-slate-400">2da Quincena</p>
+                <p class="text-[10px] font-black uppercase text-slate-400">2da Quincena</p>
                 <h2 id="q2-total" class="text-lg font-black italic">$ 0</h2>
             </div>
             <div class="col-span-2 bg-blue-600 rounded-[2rem] p-4 text-white flex justify-between items-center px-8 shadow-xl">
@@ -99,30 +99,30 @@ window.openWorkModal = (tipo) => {
             
             <div class="space-y-4 mb-8">
                 <div class="relative">
-                    <label class="text-[9px] font-black text-slate-400 uppercase ml-2">Fecha del Registro</label>
+                    <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Fecha del Registro</label>
                     <input type="date" id="w-date" value="${hoy}" 
                         class="w-full bg-slate-50 border-none rounded-2xl p-4 font-black text-sm outline-none focus:ring-2 ring-blue-500 text-center">
                 </div>
 
                 ${esIngreso ? `
                     <div class="relative">
-                        <label class="text-[9px] font-black text-slate-400 uppercase ml-2">Cant. Serenatas</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Cant. Serenatas</label>
                         <input type="tel" id="w-qty" inputmode="numeric" pattern="[0-9]*" placeholder="0" 
                             class="w-full bg-slate-50 border-none rounded-2xl p-4 font-black text-xl outline-none focus:ring-2 ring-emerald-500 text-center">
                     </div>
                     <div class="relative">
-                        <label class="text-[9px] font-black text-slate-400 uppercase ml-2">Extras / Transporte</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Extras / Transporte</label>
                         <input type="tel" id="w-extra" inputmode="numeric" pattern="[0-9]*" placeholder="0" 
                             oninput="formatCurrency(this)"
                             class="w-full bg-slate-50 border-none rounded-2xl p-4 font-black text-xl outline-none text-center">
                     </div>
                 ` : `
                     <div class="relative">
-                        <label class="text-[9px] font-black text-slate-400 uppercase ml-2">Monto del Adelanto</label>
+                        <label class="text-[10px] font-black text-slate-400 uppercase ml-2">Monto del Adelanto</label>
                         <input type="tel" id="w-monto" inputmode="numeric" pattern="[0-9]*" placeholder="0" 
                             oninput="formatCurrency(this)"
                             class="w-full bg-slate-50 border-none rounded-2xl p-4 font-black text-xl outline-none focus:ring-2 ring-orange-500 text-center">
-                        <button type="button" onclick="setFullPayment()" class="mt-2 w-full text-[8px] font-black text-orange-500 uppercase tracking-widest bg-orange-50 py-2 rounded-xl">
+                        <button type="button" onclick="setFullPayment()" class="mt-2 w-full text-[10px] font-black text-orange-500 uppercase tracking-widest bg-orange-50 py-2 rounded-xl">
                             Cobrar saldo total pendiente
                         </button>
                     </div>
@@ -201,25 +201,32 @@ async function loadWorkData() {
         const snapshot = await get(child(ref(db), 'work_records'));
         const listDiv = document.getElementById('work-history-list');
         
-        const BASE_CAJA = 1500000;
+        const BASE_CAJA = 3000000;
         let totalAdelantosGlobal = 0;
-        let q1 = 0, q2 = 0, serenatasContador = 0, saldoPendienteGlobal = 0; 
+        let saldoPendienteGlobal = 0; 
+
+        // Variables específicas para el MES SELECCIONADO
+        let q1 = 0, q2 = 0, serenatasContador = 0;
+        let ganadoEnEsteMes = 0; // Esta variable moverá la barra
 
         if (snapshot.exists()) {
             const allRecords = Object.entries(snapshot.val()).map(([id, data]) => ({ id, ...data }));
 
+            // 1. CÁLCULO GLOBAL (Para el estado de cuenta general)
             allRecords.forEach(reg => {
                 const monto = parseInt(reg.monto);
                 saldoPendienteGlobal += (reg.tipo === 'ingreso' ? monto : -monto);
                 if (reg.tipo === 'adelanto') totalAdelantosGlobal += monto;
             });
 
+            // 2. FILTRADO POR MES SELECCIONADO
             const filteredRecords = allRecords.filter(reg => {
                 const d = new Date(reg.timestamp);
                 return d.getMonth() === currentViewDate.getMonth() && 
                        d.getFullYear() === currentViewDate.getFullYear();
             }).sort((a, b) => b.timestamp - a.timestamp);
 
+            // 3. PROCESAR REGISTROS DEL MES (Para UI y Barra)
             listDiv.innerHTML = filteredRecords.map(reg => {
                 const date = new Date(reg.timestamp);
                 const dia = date.getDate();
@@ -228,6 +235,7 @@ async function loadWorkData() {
                 const esIngreso = reg.tipo === 'ingreso';
 
                 if (esIngreso) {
+                    ganadoEnEsteMes += monto; // Solo lo del mes actual
                     if (dia <= 15) q1 += monto;
                     else q2 += monto;
                     const match = reg.desc.match(/^(\d+)/);
@@ -241,8 +249,9 @@ async function loadWorkData() {
                                 <span class="text-[11px] leading-none">${dia}</span>
                                 <span class="text-[7px]">${diaSemana}</span>
                             </div>
-                            <div onclick="editWorkEntry('${reg.id}')" class="cursor-pointer"> <p class="font-bold text-slate-800 text-sm leading-tight">${reg.desc}</p>
-                                <p class="text-[8px] font-black text-slate-300 uppercase">${dia <= 15 ? '1ra Quincena' : '2da Quincena'}</p>
+                            <div onclick="editWorkEntry('${reg.id}')" class="cursor-pointer"> 
+                                <p class="font-bold text-slate-800 text-sm leading-tight">${reg.desc}</p>
+                                <p class="text-[10px] font-black text-slate-300 uppercase">${dia <= 15 ? '1ra Quincena' : '2da Quincena'}</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
@@ -259,39 +268,41 @@ async function loadWorkData() {
                 `;
             }).join('');
 
-            // --- Lógica de la Barra y Caja ---
-            const cupoMaximoActual = BASE_CAJA - totalAdelantosGlobal;
-            const loQueHeGanado = saldoPendienteGlobal;
-            let porcentajeProgreso = cupoMaximoActual > 0 ? Math.min(100, (loQueHeGanado / cupoMaximoActual) * 100) : 0;
+            // --- LÓGICA DE LA BARRA (AHORA BASADA EN EL MES) ---
+            // La meta sigue siendo 3M, pero el progreso es sobre lo ganado EN EL MES mostrado.
+            const loQueHeGanadoEsteMes = ganadoEnEsteMes;
+            let porcentajeProgreso = Math.min(100, (loQueHeGanadoEsteMes / BASE_CAJA) * 100);
 
-            const cajaDispElem = document.getElementById('caja-disponible');
             const barraElem = document.getElementById('barra-progreso-caja');
             const textoFaltanteElem = document.getElementById('texto-faltante');
 
+            // La caja disponible sigue siendo global (porque es dinero real en mano)
+            const cupoMaximoActual = BASE_CAJA - totalAdelantosGlobal;
+            const cajaDispElem = document.getElementById('caja-disponible');
             if (cajaDispElem) cajaDispElem.innerText = `$ ${cupoMaximoActual.toLocaleString('de-DE')}`;
             
             if (barraElem) {
                 barraElem.style.width = `${porcentajeProgreso}%`;
-                if (porcentajeProgreso > 80) {
+                // Cambiar color si llegamos a la meta del mes
+                if (porcentajeProgreso >= 100) {
                     barraElem.classList.replace('bg-emerald-500', 'bg-blue-400');
                 } else {
                     barraElem.classList.replace('bg-blue-400', 'bg-emerald-500');
                 }
             }
 
-            // Aquí integramos las líneas del faltante con lógica de excedente
             if (textoFaltanteElem) {
-                const faltante = cupoMaximoActual - loQueHeGanado;
-                if (faltante <= 0) {
-                    textoFaltanteElem.innerText = "¡META ALCANZADA! 🌟";
+                const faltanteMes = BASE_CAJA - loQueHeGanadoEsteMes;
+                if (faltanteMes <= 0) {
+                    textoFaltanteElem.innerText = "¡META MENSUAL LOGRADA! 🌟";
                     textoFaltanteElem.classList.replace('text-emerald-400', 'text-blue-400');
                 } else {
-                    textoFaltanteElem.innerText = `Faltan $ ${faltante.toLocaleString('de-DE')}`;
+                    textoFaltanteElem.innerText = `Faltan $ ${faltanteMes.toLocaleString('de-DE')} este mes`;
                     textoFaltanteElem.classList.replace('text-blue-400', 'text-emerald-400');
                 }
             }
 
-            // --- Actualizar Totales ---
+            // --- ACTUALIZAR TOTALES INFERIORES ---
             document.getElementById('q1-total').innerText = `$ ${q1.toLocaleString('de-DE')}`;
             document.getElementById('q2-total').innerText = `$ ${q2.toLocaleString('de-DE')}`;
             document.getElementById('month-total').innerText = `$ ${(q1 + q2).toLocaleString('de-DE')}`;
