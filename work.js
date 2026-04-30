@@ -35,7 +35,6 @@ async function renderWork(container) {
                     <div id="barra-progreso-caja" class="h-full bg-emerald-500 transition-all duration-1000" style="width: 0%"></div>
                 </div>
                 <div class="flex justify-between mt-2">
-                    <p class="text-[10px] font-bold text-slate-500 uppercase">Progreso de cobro</p>
                     <p id="texto-faltante" class="text-[10px] font-bold text-emerald-400 uppercase italic"></p>
                 </div>
             </div>
@@ -303,8 +302,7 @@ async function loadWorkData() {
                     textoFaltanteElem.innerText = "¡META MENSUAL LOGRADA! 🌟";
                     textoFaltanteElem.className = "text-[10px] font-black text-blue-400 uppercase italic";
                 } else {
-                    textoFaltanteElem.innerText = `Faltan $ ${faltante.toLocaleString('de-DE')} este mes`;
-                    textoFaltanteElem.className = "text-[10px] font-black text-emerald-400 uppercase italic";
+                    
                 }
             }
 
