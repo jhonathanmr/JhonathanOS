@@ -274,16 +274,23 @@ async function startWorkout(day) {
                         
                         <div class="space-y-3">
                             ${Array.from({length: ex.sets}).map((_, i) => `
-                                <div class="flex items-center gap-3 relative">
-                                    <span class="text-[10px] font-bold text-slate-300 w-4">S${i+1}</span>
-                                    <input type="tel" id="input-kg-${ex.id}-${i}" inputmode="numeric" placeholder="0" 
-                                           class="flex-1 bg-slate-50 border-none rounded-xl p-3 text-center font-bold text-sm outline-none">
-                                    <input type="tel" id="input-reps-${ex.id}-${i}" inputmode="numeric" placeholder="Rps" 
-                                           class="flex-1 bg-slate-50 border-none rounded-xl p-3 text-center font-bold text-sm outline-none">
+                                <div class="flex items-center gap-2 relative w-full"> 
+                                    <span class="text-[10px] font-bold text-slate-300 w-4 shrink-0">S${i+1}</span>
                                     
-                                    <div id="ref-${ex.id}-${i}" class="absolute -top-2 left-12 text-[9px] text-blue-500 font-bold opacity-0"></div>
+                                    <div class="flex-1 flex gap-2 min-w-0"> 
+                                        <input type="tel" id="input-kg-${ex.id}-${i}" inputmode="numeric" placeholder="0" 
+                                            class="w-full bg-slate-50 border-none rounded-xl p-3 text-center font-bold text-sm outline-none min-w-0">
+                                        
+                                        <input type="tel" id="input-reps-${ex.id}-${i}" inputmode="numeric" placeholder="Rps" 
+                                            class="w-full bg-slate-50 border-none rounded-xl p-3 text-center font-bold text-sm outline-none min-w-0">
+                                    </div>
 
-                                    <button onclick="this.textContent = '🔥'; iniciarDescanso(${i === 0 ? 60 : secondsToRest})" class="bg-slate-100 p-3 rounded-xl">✔️</button>
+                                    <div id="ref-${ex.id}-${i}" class="absolute -top-3 left-10 text-[9px] text-blue-500 font-bold opacity-0 whitespace-nowrap"></div>
+
+                                    <button onclick="this.textContent = '🔥'; iniciarDescanso(${i === 0 ? 60 : secondsToRest})" 
+                                            class="bg-slate-100 p-3 rounded-xl shrink-0 h-11 w-11 flex items-center justify-center">
+                                        ✔️
+                                    </button>
                                 </div>
                             `).join('')}
                         </div>
