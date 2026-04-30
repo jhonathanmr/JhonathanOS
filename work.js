@@ -409,6 +409,102 @@ window.closeModal = () => {
 };
 
 
+
+window.cargarHistorialExcel = async (datosJSON) => {
+    console.log("Iniciando carga masiva...");
+    
+    for (const item of datosJSON) {
+        try {
+            // Usamos T12:00:00 para asegurar que caiga en el día correcto en Pereira
+            const selectedTimestamp = new Date(item.fecha + "T12:00:00").getTime();
+            
+            // Creamos el ID igual que en tu función saveWorkEntry
+            const recordId = `${selectedTimestamp}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+            await set(ref(db, 'work_records/' + recordId), {
+                tipo: item.tipo,
+                monto: parseInt(item.monto),
+                desc: item.desc,
+                timestamp: selectedTimestamp
+            });
+
+            console.log(`✅ Cargado: ${item.fecha} - ${item.desc}`);
+        } catch (e) {
+            console.error(`❌ Error en: ${item.fecha}`, e);
+        }
+    }
+    alert("¡Carga completa! Revisa los meses en tu App.");
+}
+
+window.corregirYLimpiarEnero = async () => {
+    console.log("Iniciando corrección y limpieza (Modo Compatible)...");
+    const dbRef = ref(db, 'work_records');
+    const snapshot = await get(dbRef);
+    
+    if (snapshot.exists()) {
+        const data = snapshot.val();
+        const keys = Object.keys(data);
+        const vistos = new Set();
+        let corregidos = 0;
+        let borrados = 0;
+
+        for (const key of keys) {
+            let reg = data[key];
+            
+            // 1. Estandarizar descripción
+            const descCorregida = reg.desc.replace(/serenatas/i, "Serenatas").trim();
+            
+            // 2. Crear huella única para detectar duplicados
+            const fechaLegible = new Date(reg.timestamp).toLocaleDateString();
+            const huella = `${fechaLegible}_${reg.monto}_${descCorregida}`;
+
+            if (vistos.has(huella)) {
+                // BORRAR: Si no tenemos 'remove', mandamos 'null' con 'set'
+                await set(ref(db, `work_records/${key}`), null);
+                borrados++;
+                console.log(`🗑️ Eliminado duplicado: ${huella}`);
+            } else {
+                // ACTUALIZAR: Si el nombre estaba mal, lo corregimos
+                if (reg.desc !== descCorregida) {
+                    await set(ref(db, `work_records/${key}`), {
+                        ...reg,
+                        desc: descCorregida
+                    });
+                    corregidos++;
+                }
+                vistos.add(huella);
+            }
+        }
+        alert(`¡Limpieza Exitosa!\n- Corregidos: ${corregidos}\n- Borrados: ${borrados}`);
+    } else {
+        console.log("No hay datos para procesar.");
+    }
+};
+
+
+window.cargarAdelantosExcel = async (datosJSON) => {
+    console.log("Iniciando carga de adelantos...");
+    
+    for (const item of datosJSON) {
+        try {
+            const selectedTimestamp = new Date(item.fecha + "T12:00:00").getTime();
+            const recordId = `${selectedTimestamp}_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
+
+            await set(ref(db, 'work_records/' + recordId), {
+                tipo: "adelanto", // Forzamos el tipo a adelanto
+                monto: parseInt(item.monto),
+                desc: item.desc,
+                timestamp: selectedTimestamp
+            });
+
+            console.log(`✅ Adelanto Cargado: ${item.fecha} - ${item.desc}`);
+        } catch (e) {
+            console.error(`❌ Error en adelanto de fecha: ${item.fecha}`, e);
+        }
+    }
+    alert("¡Carga de adelantos completa!");
+}
+
 // Exportar para que app.js pueda usarlo
 window.renderWork = renderWork;
 window.changeMonth = changeMonth;
