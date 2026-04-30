@@ -219,26 +219,23 @@ async function loadWorkData() {
                        d.getFullYear() === currentViewDate.getFullYear();
             }).sort((a, b) => b.timestamp - a.timestamp);
 
-           // 3. CÁLCULO DE TOTALES (Ajustado para detectar números en cualquier parte)
+           // 3. CÁLCULO DE TOTALES (Ajustado)
             const totalesMes = filteredRecords.reduce((acc, reg) => {
                 const monto = parseInt(reg.monto);
                 const dia = new Date(reg.timestamp).getDate();
 
                 if (reg.tipo === 'ingreso') {
                     acc.ganado += monto;
-                    if (dia <= 15) acc.q1 += monto; else acc.q2 += monto;
+                    if (dia <= 15) acc.q1_ingresos += monto; else acc.q2_ingresos += monto;
                     
-                    // CORRECCIÓN AQUÍ: Busca cualquier número en la descripción
                     const match = reg.desc.match(/(\d+)/); 
-                    if (match) {
-                        acc.serenatas += parseInt(match[0]);
-                    }
+                    if (match) acc.serenatas += parseInt(match[0]);
                 } else if (reg.tipo === 'adelanto') {
                     acc.adelantos += monto;
                     if (dia <= 15) acc.q1_adelantos += monto; else acc.q2_adelantos += monto;
                 }
                 return acc;
-            }, { ganado: 0, adelantos: 0, q1: 0, q2: 0, q1_adelantos: 0, q2_adelantos: 0, serenatas: 0 });
+            }, { ganado: 0, adelantos: 0, q1_ingresos: 0, q2_ingresos: 0, q1_adelantos: 0, q2_adelantos: 0, serenatas: 0 });
 
             // 4. RENDERIZADO DE LA LISTA (Con botón de editar)
             listDiv.innerHTML = filteredRecords.map(reg => {
@@ -306,30 +303,36 @@ async function loadWorkData() {
                 }
             }
 
-            // 6. TOTALES INFERIORES (Cajas Azules con Valor Absoluto)
+           // 6. TOTALES INFERIORES (Cajas Azules)
             const cupoQ1Raw = 1500000 - totalesMes.q1_adelantos;
             const cupoQ2Raw = 1500000 - totalesMes.q2_adelantos;
 
-            // Usamos Math.abs para mostrar el valor sin el signo menos
-            const cupoQ1Visible = Math.abs(cupoQ1Raw);
-            const cupoQ2Visible = Math.abs(cupoQ2Raw);
-
-            // Etiquetas dinámicas para saber si es lo que queda o lo que se pasaron
-            const etiquetaQ1 = cupoQ1Raw < 0 ? "EXCEDIDO:" : "CUPO DISP:";
-            const etiquetaQ2 = cupoQ2Raw < 0 ? "EXCEDIDO:" : "CUPO DISP:";
+            // Cálculo de lo que falta por cobrar para alcanzar el cupo
+            const faltaCobrarQ1 = Math.max(0, 1500000 - totalesMes.q1_ingresos);
+            const faltaCobrarQ2 = Math.max(0, 1500000 - totalesMes.q2_ingresos);
 
             document.getElementById('q1-total').innerHTML = `
-                <span class="block">$ ${totalesMes.q1.toLocaleString('de-DE')}</span>
-                <span class="text-[12px] ${cupoQ1Raw < 0 ? 'text-emerald-400' : 'text-white-400'} font-black block mt-1">
-                    ${etiquetaQ1} $ ${cupoQ1Visible.toLocaleString('de-DE')}
-                </span>
+                <span class="block">$ ${totalesMes.q1_ingresos.toLocaleString('de-DE')}</span>
+                <div class="mt-1 flex flex-col gap-0.5">
+                    <span class="text-[10px] ${cupoQ1Raw < 0 ? 'text-emerald-400' : 'text-white-400'} font-black uppercase">
+                        ${cupoQ1Raw < 0 ? '' : ''} $ ${Math.abs(cupoQ1Raw).toLocaleString('de-DE')}
+                    </span>
+                    <span class="text-[10px] text-slate-400 font-bold uppercase">
+                        FALTAN: $ ${faltaCobrarQ1.toLocaleString('de-DE')}
+                    </span>
+                </div>
             `;
 
             document.getElementById('q2-total').innerHTML = `
-                <span class="block">$ ${totalesMes.q2.toLocaleString('de-DE')}</span>
-                <span class="text-[12px] ${cupoQ2Raw < 0 ? 'text-emerald-400' : 'text-white-400'} font-black block mt-1">
-                    ${etiquetaQ2} $ ${cupoQ2Visible.toLocaleString('de-DE')}
-                </span>
+                <span class="block">$ ${totalesMes.q2_ingresos.toLocaleString('de-DE')}</span>
+                <div class="mt-1 flex flex-col gap-0.5">
+                    <span class="text-[10px] ${cupoQ2Raw < 0 ? 'text-emerald-400' : 'text-white-400'} font-black uppercase">
+                        ${cupoQ2Raw < 0 ? '' : ''} $ ${Math.abs(cupoQ2Raw).toLocaleString('de-DE')}
+                    </span>
+                    <span class="text-[10px] text-slate-400 font-bold uppercase">
+                        FALTAN: $ ${faltaCobrarQ2.toLocaleString('de-DE')}
+                    </span>
+                </div>
             `;
 
             // El resto de tus totales se mantienen igual
