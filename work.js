@@ -202,21 +202,15 @@ async function loadWorkData() {
         const listDiv = document.getElementById('work-history-list');
         
         const BASE_CAJA = 3000000;
-        let totalAdelantosGlobal = 0;
         let saldoPendienteGlobal = 0; 
-
-        // Variables específicas para el MES SELECCIONADO
-        let q1 = 0, q2 = 0, serenatasContador = 0;
-        let ganadoEnEsteMes = 0; // Esta variable moverá la barra
 
         if (snapshot.exists()) {
             const allRecords = Object.entries(snapshot.val()).map(([id, data]) => ({ id, ...data }));
 
-            // 1. CÁLCULO GLOBAL (Para el estado de cuenta general)
+            // 1. CÁLCULO DE SALDO GLOBAL (Histórico)
             allRecords.forEach(reg => {
                 const monto = parseInt(reg.monto);
                 saldoPendienteGlobal += (reg.tipo === 'ingreso' ? monto : -monto);
-                if (reg.tipo === 'adelanto') totalAdelantosGlobal += monto;
             });
 
             // 2. FILTRADO POR MES SELECCIONADO
@@ -226,7 +220,23 @@ async function loadWorkData() {
                        d.getFullYear() === currentViewDate.getFullYear();
             }).sort((a, b) => b.timestamp - a.timestamp);
 
-            // 3. PROCESAR REGISTROS DEL MES (Para UI y Barra)
+            // 3. CÁLCULO DE TOTALES DEL MES (Data Analysis)
+            const totalesMes = filteredRecords.reduce((acc, reg) => {
+                const monto = parseInt(reg.monto);
+                if (reg.tipo === 'ingreso') {
+                    acc.ganado += monto;
+                    if (new Date(reg.timestamp).getDate() <= 15) acc.q1 += monto;
+                    else acc.q2 += monto;
+                    
+                    const match = reg.desc.match(/^(\d+)/);
+                    if(match) acc.serenatas += parseInt(match[1]);
+                } else if (reg.tipo === 'adelanto') {
+                    acc.adelantos += monto;
+                }
+                return acc;
+            }, { ganado: 0, adelantos: 0, q1: 0, q2: 0, serenatas: 0 });
+
+            // 4. RENDERIZADO DE LA LISTA (Con botón de editar)
             listDiv.innerHTML = filteredRecords.map(reg => {
                 const date = new Date(reg.timestamp);
                 const dia = date.getDate();
@@ -234,20 +244,12 @@ async function loadWorkData() {
                 const monto = parseInt(reg.monto);
                 const esIngreso = reg.tipo === 'ingreso';
 
-                if (esIngreso) {
-                    ganadoEnEsteMes += monto; // Solo lo del mes actual
-                    if (dia <= 15) q1 += monto;
-                    else q2 += monto;
-                    const match = reg.desc.match(/^(\d+)/);
-                    if(match) serenatasContador += parseInt(match[1]);
-                }
-
                 return `
                     <div class="bg-white p-4 rounded-2xl border border-slate-100 flex justify-between items-center shadow-sm">
                         <div class="flex items-center gap-3">
                             <div class="bg-slate-50 h-10 w-10 rounded-xl flex flex-col items-center justify-center font-black text-slate-400">
                                 <span class="text-[11px] leading-none">${dia}</span>
-                                <span class="text-[7px]">${diaSemana}</span>
+                                <span class="text-[10px]">${diaSemana}</span>
                             </div>
                             <div onclick="editWorkEntry('${reg.id}')" class="cursor-pointer"> 
                                 <p class="font-bold text-slate-800 text-sm leading-tight">${reg.desc}</p>
@@ -260,7 +262,7 @@ async function loadWorkData() {
                             </p>
                             <button onclick="editWorkEntry('${reg.id}')" class="text-slate-300 hover:text-blue-500 ml-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                                 </svg>
                             </button>
                         </div>
@@ -268,51 +270,41 @@ async function loadWorkData() {
                 `;
             }).join('');
 
-            // --- LÓGICA DE LA BARRA (AHORA BASADA EN EL MES) ---
-            // La meta sigue siendo 3M, pero el progreso es sobre lo ganado EN EL MES mostrado.
-            const loQueHeGanadoEsteMes = ganadoEnEsteMes;
-            let porcentajeProgreso = Math.min(100, (loQueHeGanadoEsteMes / BASE_CAJA) * 100);
+            // 5. ACTUALIZACIÓN DE UI (Caja, Barra y Letreros)
+            const cupoMaximoActual = (BASE_CAJA - totalesMes.adelantos)*(-1);
+            const cajaDispElem = document.getElementById('caja-disponible');
+            if (cajaDispElem) {
+                cajaDispElem.innerText = `$ ${cupoMaximoActual.toLocaleString('de-DE')}`;
+                cajaDispElem.style.color = cupoMaximoActual < 0 ? '#fb7185' : '#0ada5ae5';
+            }
 
             const barraElem = document.getElementById('barra-progreso-caja');
+            const porcentaje = Math.min(100, (totalesMes.ganado / BASE_CAJA) * 100);
+            if (barraElem) barraElem.style.width = `${porcentaje}%`;
+
             const textoFaltanteElem = document.getElementById('texto-faltante');
-
-            // La caja disponible sigue siendo global (porque es dinero real en mano)
-            const cupoMaximoActual = BASE_CAJA - totalAdelantosGlobal;
-            const cajaDispElem = document.getElementById('caja-disponible');
-            if (cajaDispElem) cajaDispElem.innerText = `$ ${cupoMaximoActual.toLocaleString('de-DE')}`;
-            
-            if (barraElem) {
-                barraElem.style.width = `${porcentajeProgreso}%`;
-                // Cambiar color si llegamos a la meta del mes
-                if (porcentajeProgreso >= 100) {
-                    barraElem.classList.replace('bg-emerald-500', 'bg-blue-400');
-                } else {
-                    barraElem.classList.replace('bg-blue-400', 'bg-emerald-500');
-                }
-            }
-
             if (textoFaltanteElem) {
-                const faltanteMes = BASE_CAJA - loQueHeGanadoEsteMes;
-                if (faltanteMes <= 0) {
+                const faltante = BASE_CAJA - totalesMes.ganado;
+                if (faltante <= 0) {
                     textoFaltanteElem.innerText = "¡META MENSUAL LOGRADA! 🌟";
-                    textoFaltanteElem.classList.replace('text-emerald-400', 'text-blue-400');
+                    textoFaltanteElem.className = "text-[10px] font-black text-blue-400 uppercase italic";
                 } else {
-                    textoFaltanteElem.innerText = `Faltan $ ${faltanteMes.toLocaleString('de-DE')} este mes`;
-                    textoFaltanteElem.classList.replace('text-blue-400', 'text-emerald-400');
+                    textoFaltanteElem.innerText = `Faltan $ ${faltante.toLocaleString('de-DE')} este mes`;
+                    textoFaltanteElem.className = "text-[10px] font-black text-emerald-400 uppercase italic";
                 }
             }
 
-            // --- ACTUALIZAR TOTALES INFERIORES ---
-            document.getElementById('q1-total').innerText = `$ ${q1.toLocaleString('de-DE')}`;
-            document.getElementById('q2-total').innerText = `$ ${q2.toLocaleString('de-DE')}`;
-            document.getElementById('month-total').innerText = `$ ${(q1 + q2).toLocaleString('de-DE')}`;
-            document.getElementById('total-qty-mes').innerText = serenatasContador;
+            // 6. TOTALES INFERIORES
+            document.getElementById('q1-total').innerText = `$ ${totalesMes.q1.toLocaleString('de-DE')}`;
+            document.getElementById('q2-total').innerText = `$ ${totalesMes.q2.toLocaleString('de-DE')}`;
+            document.getElementById('month-total').innerText = `$ ${totalesMes.ganado.toLocaleString('de-DE')}`;
+            document.getElementById('total-qty-mes').innerText = totalesMes.serenatas;
             document.getElementById('saldo-pendiente').innerText = `$ ${saldoPendienteGlobal.toLocaleString('de-DE')}`;
 
         } else {
             listDiv.innerHTML = `<p class="text-center text-slate-400 text-xs py-10">No hay registros.</p>`;
         }
-    } catch (e) { console.error("Error:", e); }
+    } catch (e) { console.error("Error cargando datos:", e); }
 }
 
 // Función auxiliar para no repetir código de actualización
