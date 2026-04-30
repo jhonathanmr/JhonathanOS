@@ -1,5 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { renderStudy } from './study.js';
+//import { renderStudy, inicializarBaseDeDatosEstudio } from './study.js';
 
 // --- CONFIGURACIÓN GLOBAL ---
 const SESSION_TIMEOUT_MINS = 120; // <--- MUEVE ESTO AQUÍ ARRIBA
@@ -152,7 +154,9 @@ function showView(view) {
         renderSettings(container);
     }else if(view === 'work') {
     renderWork(container); 
-    }
+    }else if(view === 'study') {
+    renderStudy(container);
+    }   
 }
 
 // 3. Renderizar Inicio con HISTORIAL y PROGRESO
@@ -727,3 +731,5 @@ window.toggleDetail = (id) => {
 document.addEventListener('DOMContentLoaded', () => {
     showView('gym');
 });
+
+inicializarBaseDeDatosEstudio();
