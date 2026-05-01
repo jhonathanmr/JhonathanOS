@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { renderStudy } from './study.js';
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 //import { renderStudy, inicializarBaseDeDatosEstudio } from './study.js';
 
 // --- CONFIGURACIÓN GLOBAL ---
@@ -19,6 +20,7 @@ const localConfig = {
 const firebaseConfig = window.firebaseConfig || localConfig;
 const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);
+const auth = getAuth(app);
 
 console.log("🔥 Firebase conectado con éxito");
 
@@ -122,6 +124,23 @@ const USER_DATA = {
                 { id: "s7", name: "HIIT Session", sets: 1, goal: "20 min" }
             ]
         }
+    }
+};
+
+window.ejecutarVinculacion = async () => {
+    const email = document.getElementById('admin-email').value;
+    const pass = document.getElementById('admin-password').value;
+
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+        console.log("✅ Dispositivo vinculado:", userCredential.user.email);
+        
+        // Una vez vinculado, intentamos entrar al login normal
+        alert("¡Servidor vinculado con éxito! Ahora puedes usar tu PIN.");
+        location.reload(); // Recargamos para que reconozca la nueva sesión
+    } catch (error) {
+        console.error("Fallo en vinculación:", error.message);
+        alert("Error: Credenciales de administrador incorrectas.");
     }
 };
 
@@ -541,29 +560,41 @@ function isSessionValid() {
     return true;
 }
 
-window.checkAccess = async () => { // Agregamos async
-    const input = document.getElementById('pass-input').value;
-    
-    // 1. Buscamos la clave real en la Base de Datos
+window.checkAccess = async () => {
+    const input = document.getElementById('pass-input').value.trim();
+    const container = document.getElementById('view-container');
+
     try {
         const snapshot = await get(child(ref(db), 'config/admin_password'));
-        const masterKey = snapshot.exists() ? snapshot.val() : "1234"; // "1234" de respaldo
+        const masterKey = snapshot.exists() ? snapshot.val().toString() : "1234";
 
-        if (input === masterKey.toString()) {
+        if (input === masterKey) {
             localStorage.setItem('isLogged', 'true');
             localStorage.setItem('loginTimestamp', Date.now().toString());
-            showView('gym');
+            showView('gym'); 
         } else {
+            // Lógica de error de PIN...
             const errorMsg = document.getElementById('login-error');
             errorMsg.classList.replace('opacity-0', 'opacity-100');
             setTimeout(() => errorMsg.classList.replace('opacity-100', 'opacity-0'), 2000);
         }
     } catch (error) {
-        console.error("Error al validar acceso:", error);
-        alert("Error de conexión con la base de datos.");
+        if (error.message.includes("PERMISSION_DENIED")) {
+            // SI NO HAY PERMISO, MOSTRAMOS EL MÓDULO DE INGRESO A LA BD
+            renderVincularServidor(container);
+        } else {
+            console.error("Error crítico:", error);
+        }
     }
 };
 
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        console.log("🔐 Sesión de administrador activa:", user.email);
+    } else {
+        console.log("👤 Modo invitado (Acceso restringido)");
+    }
+});
 
 // Función auxiliar para abrir/cerrar detalles
 window.toggleDetail = (id) => {
@@ -706,15 +737,43 @@ window.confirmLogout = () => {
     );
 };
 
-async function checkAccess() {
+window.vincularDispositivoAdmin = async (email, password) => {
     try {
-        const dbRef = ref(db);
-        // Aquí ya no dará error porque 'get' está importado arriba
-        const snapshot = await get(child(dbRef, `usuarios/tu_ruta`)); 
-        // ... tu lógica
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log("✅ Dispositivo vinculado con éxito:", userCredential.user.email);
+        alert("¡JhonathanOS ahora tiene acceso total a la BD!");
     } catch (error) {
-        console.error("Error al validar acceso:", error);
+        console.error("Error de vinculación:", error.message);
     }
+};
+
+function renderVincularServidor(container) {
+    container.innerHTML = `
+        <div class="h-screen flex flex-col items-center justify-center p-6 bg-slate-900 text-white">
+            <div class="mb-8 text-center">
+                <div class="text-5xl mb-4">🔐</div>
+                <h2 class="text-2xl font-black uppercase tracking-tighter">Vinculación de Servidor</h2>
+                <p class="text-slate-400 text-xs">JhonathanOS necesita credenciales de administrador</p>
+            </div>
+            
+            <div class="w-full max-w-xs space-y-4">
+                <input type="email" id="admin-email" placeholder="Email de Desarrollador" 
+                       class="w-full bg-slate-800 border-none rounded-2xl p-4 outline-none focus:ring-2 ring-blue-500">
+                
+                <input type="password" id="admin-password" placeholder="Contraseña Firebase" 
+                       class="w-full bg-slate-800 border-none rounded-2xl p-4 outline-none focus:ring-2 ring-blue-500">
+                
+                <button onclick="ejecutarVinculacion()" 
+                        class="w-full bg-blue-600 p-4 rounded-2xl font-black uppercase active:scale-95 transition-all">
+                    Vincular Dispositivo
+                </button>
+                
+                <button onclick="showView('login')" class="w-full text-slate-500 text-xs font-bold uppercase">
+                    Volver al Login
+                </button>
+            </div>
+        </div>
+    `;
 }
 
 // --- EXPORTACIONES PARA EL HTML ---
@@ -739,4 +798,4 @@ document.addEventListener('DOMContentLoaded', () => {
     showView('gym');
 });
 
-inicializarBaseDeDatosEstudio();
+//inicializarBaseDeDatosEstudio();
