@@ -43,20 +43,6 @@ const USER_DATA = {
     },
     routine: {
         "Monday": {
-            name: "Full Leg + HIIT",
-            focus: "Mechanical Tension",
-            exercises: [
-                { id: "w1", name: "Squats", sets: 5, goal: "6-8 reps" },
-                { id: "w2", name: "Deadlift", sets: 4, goal: "5 reps" },
-                { id: "w3", name: "Leg Press", sets: 4, goal: "10-12 reps" },
-                { id: "w4", name: "Leg Extension", sets: 4, goal: "12-15 reps" },
-                { id: "w5", name: "Leg Curl", sets: 4, goal: "12-15 reps" },
-                { id: "w6", name: "Calf Raises", sets: 5, goal: "15-20 reps" },
-                { id: "w7", name: "HIIT Session", sets: 1, goal: "15 min" }
-            ]
-        },
-        "Tuesday": {
-            
             name: "Chest, Shoulder & Triceps",
             focus: "Mechanical Tension",
             exercises: [
@@ -69,9 +55,8 @@ const USER_DATA = {
                 { id: "m7", name: "Facepulls", sets: 4, goal: "15 reps" },
                 { id: "m8", name: "Tricep Extension", sets: 4, goal: "12 reps" }
             ]
-            
         },
-        "Wednesday": {
+        "Tuesday": {
             name: "Back & Biceps + HIIT",
             focus: "Mechanical Tension",
             exercises: [
@@ -83,22 +68,22 @@ const USER_DATA = {
                 { id: "t6", name: "Cable Curls", sets: 4, goal: "12 reps" },
                 { id: "t7", name: "Shrugs (Trapecio)", sets: 4, goal: "15 reps" },
                 { id: "t8", name: "HIIT Session", sets: 1, goal: "15-20 min" }
-            ] 
-        },
-        "Thursday": {
-            name: "Full Leg + HIIT",
-            focus: "Metabolic Stress",
-            exercises: [
-                { id: "s1", name: "Squats", sets: 4, goal: "15-20 reps" },
-                { id: "s2", name: "Deadlift", sets: 3, goal: "12 reps" },
-                { id: "s3", name: "Leg Press", sets: 4, goal: "20 reps" },
-                { id: "s4", name: "Leg Extension", sets: 4, goal: "20 reps" },
-                { id: "s5", name: "Leg Curl", sets: 4, goal: "20 reps" },
-                { id: "s6", name: "Calf Raises", sets: 4, goal: "25 reps" },
-                { id: "s7", name: "HIIT Session", sets: 1, goal: "20 min" }
             ]
         },
-        "Friday": {
+        "Wednesday": {
+            name: "Full Leg + HIIT",
+            focus: "Mechanical Tension",
+            exercises: [
+                { id: "w1", name: "Squats", sets: 5, goal: "6-8 reps" },
+                { id: "w2", name: "Deadlift", sets: 4, goal: "5 reps" },
+                { id: "w3", name: "Leg Press", sets: 4, goal: "10-12 reps" },
+                { id: "w4", name: "Leg Extension", sets: 4, goal: "12-15 reps" },
+                { id: "w5", name: "Leg Curl", sets: 4, goal: "12-15 reps" },
+                { id: "w6", name: "Calf Raises", sets: 5, goal: "15-20 reps" },
+                { id: "w7", name: "HIIT Session", sets: 1, goal: "15 min" }
+            ]
+        },
+        "Thursday": {
             name: "Chest, Shoulder & Triceps",
             focus: "Metabolic Stress",
             exercises: [
@@ -112,7 +97,7 @@ const USER_DATA = {
                 { id: "th8", name: "Tricep Extension", sets: 4, goal: "20 reps" }
             ]
         },
-        "Saturday": {
+        "Friday": {
             name: "Back & Biceps + HIIT",
             focus: "Metabolic Stress",
             exercises: [
@@ -124,6 +109,19 @@ const USER_DATA = {
                 { id: "f6", name: "Cable Curls", sets: 4, goal: "20 reps" },
                 { id: "f7", name: "Shrugs", sets: 4, goal: "20 reps" },
                 { id: "f8", name: "HIIT Session", sets: 1, goal: "20 min" }
+            ]
+        },
+        "Saturday": {
+            name: "Full Leg + HIIT",
+            focus: "Metabolic Stress",
+            exercises: [
+                { id: "s1", name: "Squats", sets: 4, goal: "15-20 reps" },
+                { id: "s2", name: "Deadlift", sets: 3, goal: "12 reps" },
+                { id: "s3", name: "Leg Press", sets: 4, goal: "20 reps" },
+                { id: "s4", name: "Leg Extension", sets: 4, goal: "20 reps" },
+                { id: "s5", name: "Leg Curl", sets: 4, goal: "20 reps" },
+                { id: "s6", name: "Calf Raises", sets: 4, goal: "25 reps" },
+                { id: "s7", name: "HIIT Session", sets: 1, goal: "20 min" }
             ]
         }
     }
