@@ -211,8 +211,9 @@ function renderGymInicio(container) {
         </div>
     `;
 
+    // Cambiado: pb-[calc(5rem+env(safe-area-inset-bottom))] para dar espacio exacto al menú inferior fijo
     container.innerHTML = `
-        <div class="min-h-dvh pb-[calc(8rem+env(safe-area-inset-bottom))] flex flex-col justify-between">
+        <div class="min-h-dvh pb-[calc(6rem+env(safe-area-inset-bottom))] p-6 flex flex-col justify-start">
             <header class="mb-8 flex justify-between items-start">
                 <div>
                     <h1 class="text-3xl font-black italic">JH <span class="text-blue-600">OS</span></h1>
@@ -257,13 +258,12 @@ function renderGymInicio(container) {
                             </button>
                         </div>
                     </div>
-                    `; // <-- Aquí estaba el cierre faltante
+                    `;
                 }).join('')}
             </div>
         </div>
     `;
 }
-
 async function startWorkout(day) {
     const container = document.getElementById('view-container');
     const routine = USER_DATA.routine[day];
