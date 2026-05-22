@@ -212,7 +212,7 @@ function renderGymInicio(container) {
     `;
 
     container.innerHTML = `
-        <div class="p-6 pb-32">
+        <div class="min-h-dvh pb-[calc(8rem+env(safe-area-inset-bottom))] flex flex-col justify-between">
             <header class="mb-8 flex justify-between items-start">
                 <div>
                     <h1 class="text-3xl font-black italic">JH <span class="text-blue-600">OS</span></h1>
