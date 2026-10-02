@@ -8,7 +8,7 @@ const db = getDatabase();
 
 // Configuración de tus tarifas (Basado en tu Excel)
 const WORK_CONFIG = {
-    valorSerenata: 35000, 
+    valorSerenata: 40000, 
     valorTransporte: 10000 
 };
 
