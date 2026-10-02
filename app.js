@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { renderStudy } from './study.js';
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-//import { renderStudy, inicializarBaseDeDatosEstudio } from './study.js';
+//import { renderPlannerView } from './planner.js';
 
 // --- CONFIGURACIÓN GLOBAL ---
 const SESSION_TIMEOUT_MINS = 120; // <--- MUEVE ESTO AQUÍ ARRIBA
@@ -157,24 +157,23 @@ window.updateWeek = (incremento) => {
 function showView(view) {
     const container = document.getElementById('view-container');
     
-    // Verificar si ya ingresó la clave en esta sesión
-    const isAuthenticated = sessionStorage.getItem('isLogged') === 'true';
-
     if (!isSessionValid() && view !== 'login') {
         renderLogin(container);
         return;
     }
 
-    if(view === 'gym') {
+    if (view === 'gym') {
         renderGymInicio(container);
-    } else if(view === 'history') {
+    } else if (view === 'history') {
         renderHistorial(container);
-    } else if(view === 'settings') {
+    } else if (view === 'settings') {
         renderSettings(container);
-    }else if(view === 'work') {
-    renderWork(container); 
-    }else if(view === 'study') {
-    renderStudy(container);
+    } else if (view === 'work') {
+        renderWork(container); 
+    } else if (view === 'study') {
+        renderStudy(container);
+    } else if (view === 'planner') {
+        renderPlannerView();
     }   
 }
 
