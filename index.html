@@ -9,6 +9,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module" src="app.js"></script>
     <script type="module" src="work.js"></script>
+    <script type="module" src="planner.js"></script>
     <style>
         /* CORRECCIÓN PRINCIPAL: Congela el scroll del navegador y fija el tamaño real */
         html, body { 
@@ -62,10 +63,15 @@
             <span class="text-xl group-active:scale-125 transition-transform">🎺</span>
             <span class="text-[9px] font-black uppercase tracking-tighter text-slate-400">Work</span>
         </button>
-        <button onclick="showView('academy')" class="flex flex-col items-center text-slate-400">
+        <button onclick="showView('planner')" class="flex flex-col items-center text-slate-400">
+            <span class="text-2xl">📝</span>
+            <span class="text-[10px] font-bold uppercase">Planner</span>
+        </button>
+        <button onclick="showView('study')" class="flex flex-col items-center text-slate-400">
             <span class="text-2xl">🎓</span>
             <span class="text-[10px] font-bold uppercase">Study</span>
         </button>
+    
     </nav>
 
     <div id="modal-container" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-6 hidden"></div>
